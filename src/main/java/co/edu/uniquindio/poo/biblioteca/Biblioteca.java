@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static co.edu.uniquindio.poo.util.AssertionUtil.ASSERTION;
 
@@ -35,59 +36,53 @@ public class Biblioteca {
     }
 
     private void verificarLibroExistente(Libro libro){
-        Predicate<Libro> condicion = b -> b.getNombre().equals(b.getNombre()) && b.getClass() == b.getClass();
+        Predicate<Libro> condicion = l -> l.getNombre().equals(libro.getNombre()) && l.getClass() == libro.getClass();
 
         boolean condicionMet = libros.stream().anyMatch(condicion);
     
         ASSERTION.assertion(!condicionMet, "El libro que intenta crear ya existe.");
     }
     
-    public Optional<Libro> buscarLibrosPorAutor(Autor autor){
-        Predicate<Libro> nombreIgual= n->n.getAutor().getNombre().equals(autor.getNombre());
-        Predicate<Libro> nacionalidadIgual= n->n.getAutor().getNacionalidad().equals(autor.getNacionalidad());
-        return libros.stream().filter(nombreIgual.and(nacionalidadIgual)).findAny();
+    public Collection<Libro> buscarLibrosPorAutor(Autor autor){
+
+        Predicate<Libro> nombreIgual= n->n.getAutor().nombre().equalsIgnoreCase(autor.nombre());
+        Predicate<Libro> nacionalidadIgual= n->n.getAutor().nacionalidad().equals(autor.nacionalidad());
+        
+        return libros.stream().filter(nombreIgual.and(nacionalidadIgual)).collect(Collectors.toList());
     }
 
-
     public Optional<Libro> buscarLibroPorNombre(String nombre){
-        Predicate<Libro>condicion= l->l.getNombre().equals(nombre);
+        Predicate<Libro> condicion= l-> l.getNombre().equals(nombre);
         return libros.stream().filter(condicion).findAny();
     }
 
     //Libros digitales que tengan version impresa.
-    public Optional<LibroDigital> buscarLibrosDigitalesConVersionImpresa(LibroDigital libroBuscado){
-        Predicate<Libro> condicion = l -> l instanceof LibroDigital &&
-        l.getNombre().equals(libroBuscado.getNombre()) &&
-        l.getEditorial().equals(libroBuscado.getEditorial()) &&
-        l.getFecha() == libroBuscado.getFecha() &&
-        l.getAutor().equals(libroBuscado.getAutor());
-
-        Optional<LibroDigital> libroImpresoComparar = libros.stream()
-        .filter(libro -> libro instanceof LibroDigital)
-        .map(libro -> (LibroDigital) libro)
-        .filter(libroImpreso -> 
-            libroImpreso.getNombre().equals(libroBuscado.getNombre()) &&
-            libroImpreso.getEditorial().equals(libroBuscado.getEditorial()) &&
-            libroImpreso.getFecha() == libroBuscado.getFecha() &&
-            libroImpreso.getAutor().equals(libroBuscado.getAutor()))
-        .findAny();
-
-        if (libroImpresoComparar.isPresent()){
-            return libros.stream()
-                    .filter(condicion)
-                    .map(libro -> (LibroDigital) libro)
-                    .findAny();
-        } else return Optional.empty();
+    public Optional<LibroImpreso> buscarLibrosDigitalesConVersionImpresa(LibroDigital libroBuscado) {
+        Predicate<Libro> condicion = libro -> libro instanceof LibroImpreso &&
+            libro.getNombre().equalsIgnoreCase(libroBuscado.getNombre()) && 
+            libro.getAutor().equals(libroBuscado.getAutor()) &&
+            libro.getEditorial().equals(libroBuscado.getEditorial()) &&
+            libro.getFecha().equals(libroBuscado.getFecha());
+        Optional<Libro> libroEncontrado = libros.stream().filter(condicion).findAny();
+        if (libroEncontrado.isPresent() && libroEncontrado.get() instanceof LibroImpreso) {
+            return Optional.of((LibroImpreso) libroEncontrado.get());
+        } else {
+            return Optional.empty();
+        }
     }
+    
     //Libros cd por nombre y formato.
     public Optional<Libro> buscarLibrosCDPorNombreYFormato(String nombre, String formato){
         Predicate<Libro> condicion= libro -> libro instanceof LibroCD &&
-        libro.getNombre().equals(nombre) && libro.getFormato().equals(formato);
-        return libros.stream().filter(condicion).findAny();
+        libro.getNombre().equalsIgnoreCase(nombre) && libro.getFormato().equals(formato);
+
+        return libros.stream()
+                .filter(condicion)
+                .findAny();
     }
     //Con el nombre de un libro indicar cuantos tipos tiene.
     public short contarTiposDeLibro(String nombre){
-        long cuenta = libros.stream().filter(libro -> libro.getNombre().equals(nombre)).count();
-        return (short)cuenta;
+        long cuenta = libros.stream().filter(libro -> libro.getNombre().equalsIgnoreCase(nombre)).count();
+        return (short) cuenta;
     }
 }
