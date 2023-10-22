@@ -70,7 +70,6 @@ public class Biblioteca {
             return Optional.empty();
         }
     }
-    
     //Libros cd por nombre y formato.
     public Optional<Libro> buscarLibrosCDPorNombreYFormato(String nombre, String formato){
         Predicate<Libro> condicion= libro -> libro instanceof LibroCD &&

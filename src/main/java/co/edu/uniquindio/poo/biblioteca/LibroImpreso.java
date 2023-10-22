@@ -7,7 +7,7 @@ public class LibroImpreso extends Libro {
 
     public LibroImpreso(String nombre, Autor autor, Editorial editorial, LocalDate fecha, short cantidadEjemplares){
         super(nombre, autor, editorial, fecha);
-        ASSERTION.assertion(cantidadEjemplares >= 0,"La cantidad de libros no puede ser negativa");
+        ASSERTION.assertion(cantidadEjemplares > 0,"La cantidad de libros no puede ser negativa");
         this.cantidadEjemplares = cantidadEjemplares;
     }
 
