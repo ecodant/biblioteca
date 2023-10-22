@@ -73,10 +73,10 @@ public class Biblioteca {
     //Libros cd por nombre y formato.
     public Optional<Libro> buscarLibrosCDPorNombreYFormato(String nombre, String formato){
         Predicate<Libro> condicion= libro -> libro instanceof LibroCD &&
-        libro.getNombre().equalsIgnoreCase(nombre) && libro.getFormato().equals(formato);
+        libro.getNombre().equalsIgnoreCase(nombre) && ((LibroCD) libro).getFormato().equals(formato);
 
         return libros.stream()
-                .filter(condicion)
+                .filter(condicion) 
                 .findAny();
     }
     //Con el nombre de un libro indicar cuantos tipos tiene.

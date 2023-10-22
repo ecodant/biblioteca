@@ -30,12 +30,8 @@ public abstract class Libro {
     public Editorial getEditorial() {
         return editorial;
     }
-    public Object getFecha() {
+    public LocalDate getFecha() {
         return fecha;
-    }
-
-    public Object getFormato() {
-        return null;
     }
 }
 
