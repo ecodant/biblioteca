@@ -1,4 +1,4 @@
-**Repositorio Curso de Programación I - Ejercicio "Biblioteca"
+**Repositorio Curso de Programación - Ejercicio "Biblioteca"
 
 *** Estudiantes:
  - Edwin Viña R.
